@@ -22,19 +22,20 @@
 #	define GLFW_EXPOSE_NATIVE_WGL
 #endif //
 #include <GLFW/glfw3native.h>
-#include "logo.h"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
-struct PosColorVertex {
+struct PosColorVertex
+{
 	float x;
 	float y;
 	float z;
 	uint32_t abgr;
 };
 
-static PosColorVertex cubeVertices[] = {
+static PosColorVertex cubeVertices[] =
+{
 	{-1.0f,  1.0f,  1.0f, 0xff000000 },
 	{ 1.0f,  1.0f,  1.0f, 0xff0000ff },
 	{-1.0f, -1.0f,  1.0f, 0xff00ff00 },
@@ -45,7 +46,8 @@ static PosColorVertex cubeVertices[] = {
 	{ 1.0f, -1.0f, -1.0f, 0xffffffff },
 };
 
-static const uint16_t cubeTriList[] = {
+static const uint16_t cubeTriList[] =
+{
 	0, 1, 2,
 	1, 3, 2,
 	4, 6, 5,
@@ -60,10 +62,12 @@ static const uint16_t cubeTriList[] = {
 	6, 3, 7,
 };
 
-bgfx::ShaderHandle loadShader(const char *FILENAME) {
+bgfx::ShaderHandle loadShader(const char *FILENAME)
+{
     const char* shaderPath = "???";
 
-    switch(bgfx::getRendererType()) {
+    switch(bgfx::getRendererType())
+	{
         case bgfx::RendererType::Noop:
         case bgfx::RendererType::Direct3D9:  shaderPath = "assets/bgfx_shaders/dx9/";   break;
         case bgfx::RendererType::Direct3D11:
@@ -109,7 +113,8 @@ static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int acti
 		s_showStats = !s_showStats;
 }
 
-int main(void) {
+int main(void)
+{
 	// Create a GLFW window without an OpenGL context.
 	glfwSetErrorCallback(glfw_errorCallback);
 	if (!glfwInit())
@@ -175,12 +180,14 @@ int main(void) {
 
 	unsigned int counter = 0;
 
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window))
+	{
 		glfwPollEvents();
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
 		glfwGetWindowSize(window, &width, &height);
-		if (width != oldWidth || height != oldHeight) {
+		if (width != oldWidth || height != oldHeight)
+		{
 			bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
 			bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 		}
@@ -205,7 +212,6 @@ int main(void) {
 
 		// Use debug font to print information about this example.
 		bgfx::dbgTextClear();
-		bgfx::dbgTextImage(bx::max<uint16_t>(uint16_t(width / 2 / 8), 20) - 20, bx::max<uint16_t>(uint16_t(height / 2 / 16), 6) - 6, 40, 12, s_logo, 160);
 		bgfx::dbgTextPrintf(0, 0, 0x0f, "Press F1 to toggle stats.");
 		bgfx::dbgTextPrintf(0, 1, 0x0f, "Color can be changed with ANSI \x1b[9;me\x1b[10;ms\x1b[11;mc\x1b[12;ma\x1b[13;mp\x1b[14;me\x1b[0m code too.");
 		bgfx::dbgTextPrintf(80, 1, 0x0f, "\x1b[;0m    \x1b[;1m    \x1b[; 2m    \x1b[; 3m    \x1b[; 4m    \x1b[; 5m    \x1b[; 6m    \x1b[; 7m    \x1b[0m");
