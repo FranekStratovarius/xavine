@@ -5,6 +5,7 @@ add_requires("glfw 3.3.5", "bgfx-mine 7816","imgui v1.87-docking",{system = fals
 
 target("xavine") do
 	set_kind("binary")
+	set_languages("cxx11")
 
 	add_files("src/main.cpp")
 	add_includedirs("include")
