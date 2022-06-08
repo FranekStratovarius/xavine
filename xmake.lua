@@ -1,7 +1,6 @@
 set_project("xavine")
 add_rules("mode.debug", "mode.release")
-add_repositories("xavine-repo https://github.com/FranekStratovarius/xavine-repo main")
-add_requires("glfw 3.3.5", "bgfx-mine 7816","imgui v1.87-docking",{system = false})
+add_requires("glfw 3.3.5", "bgfx 7816", "imgui v1.87-docking", "flecs v3.0.1-alpha", {system = false})
 
 target("xavine") do
 	set_kind("binary")
@@ -9,10 +8,6 @@ target("xavine") do
 
 	add_files("src/main.cpp")
 	add_includedirs("include")
-	-- add bgfx compat include path
-	if is_plat("windows") then
-		add_includedirs("C:\\Users\\louis\\AppData\\Local\\.xmake\\packages\\b\\bgfx\\7816\\e024fd36069a4b5b83561fec3bb8fd07\\include\\compat\\msvc")
-	end
 
 	set_warnings("all")
 	set_optimize("fastest")
@@ -27,7 +22,7 @@ target("xavine") do
 		add_defines("BX_PLATFORM_OSX")
 	end
 
-	add_packages("glfw", "imgui", "bgfx-mine")
+	add_packages("glfw", "imgui", "bgfx", "flecs")
 
 	-- copy asset folder after build
 	after_build(function (target)
