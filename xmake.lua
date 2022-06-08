@@ -1,5 +1,6 @@
 set_project("xavine")
 add_rules("mode.debug", "mode.release")
+add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
 add_requires("glfw 3.3.5", "bgfx 7816", "imgui v1.87-docking", "flecs v3.0.1-alpha", {system = false})
 
 target("xavine") do
