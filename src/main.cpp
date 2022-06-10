@@ -69,14 +69,14 @@ bgfx::ShaderHandle loadShader(const char *FILENAME)
     switch(bgfx::getRendererType())
 	{
         case bgfx::RendererType::Noop:
-        case bgfx::RendererType::Direct3D9:  shaderPath = "assets/bgfx_shaders/dx9/";   break;
-        case bgfx::RendererType::Direct3D11:
-        case bgfx::RendererType::Direct3D12: shaderPath = "assets/bgfx_shaders/dx11/";  break;
-        case bgfx::RendererType::Gnm:        shaderPath = "assets/bgfx_shaders/pssl/";  break;
-        case bgfx::RendererType::Metal:      shaderPath = "assets/bgfx_shaders/metal/"; break;
-        case bgfx::RendererType::OpenGL:     shaderPath = "assets/bgfx_shaders/glsl/";  break;
-        case bgfx::RendererType::OpenGLES:   shaderPath = "assets/bgfx_shaders/essl/";  break;
-        case bgfx::RendererType::Vulkan:     shaderPath = "assets/bgfx_shaders/spirv/"; break;
+        case bgfx::RendererType::Direct3D9:  shaderPath = "assets/shaders/dx9/";   break;
+        case bgfx::RendererType::Direct3D11: shaderPath = "assets/shaders/dx11/";  break;
+        case bgfx::RendererType::Direct3D12: shaderPath = "assets/shaders/dx12/";  break;
+        case bgfx::RendererType::Gnm:        shaderPath = "assets/shaders/pssl/";  break;
+        case bgfx::RendererType::Metal:      shaderPath = "assets/shaders/metal/"; break;
+        case bgfx::RendererType::OpenGL:     shaderPath = "assets/shaders/glsl/";  break;
+        case bgfx::RendererType::OpenGLES:   shaderPath = "assets/shaders/essl/";  break;
+        case bgfx::RendererType::Vulkan:     shaderPath = "assets/shaders/spirv/"; break;
     }
 
     size_t shaderLen = strlen(shaderPath);
@@ -174,8 +174,8 @@ int main(void)
     bgfx::VertexBufferHandle vbh = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, sizeof(cubeVertices)), pcvDecl);
     bgfx::IndexBufferHandle ibh = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, sizeof(cubeTriList)));
 
-	bgfx::ShaderHandle vsh = loadShader("vs_cubes.bin");
-    bgfx::ShaderHandle fsh = loadShader("fs_cubes.bin");
+	bgfx::ShaderHandle vsh = loadShader("vs_base.bin");
+    bgfx::ShaderHandle fsh = loadShader("fs_base.bin");
     bgfx::ProgramHandle program = bgfx::createProgram(vsh, fsh, true);
 
 	unsigned int counter = 0;
