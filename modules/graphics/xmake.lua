@@ -44,10 +44,10 @@ target("xavine-graphics") do
 		}
 
 		-- High-Level Shading Language (HLSL) [DirectX] only on windows
-		if os.host == "windows" then
-			table.append({lang = "dx9",  id = "s_3_0"})
-			table.append({lang = "dx11", id = "s_4_0"})
-			table.append({lang = "dx12", id = "s_5_0"})
+		if is_plat("windows") then
+			table.insert(shader_models, {lang = "dx9",  id = "s_3_0", dx = true})
+			table.insert(shader_models, {lang = "dx11", id = "s_4_0", dx = true})
+			table.insert(shader_models, {lang = "dx12", id = "s_5_0", dx = true})
 		end
 
 		-- compile shaders and output them in the build output folder
@@ -56,8 +56,9 @@ target("xavine-graphics") do
 			os.mkdir(vformat(path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)", "assets", "shaders", shader_model.lang)))
 			-- compile fragment and vertex shader
 			for _, shader_type in ipairs({
-				{long = "fragment", short = "fs"},
-				{long = "vertex", short = "vs"},
+				{long = "fragment", short = "fs", shorter = "p"},
+				{long = "vertex", short = "vs", shorter = "v"},
+				{long = "compute", short = "cs", shorter = "c"},
 			}) do
 				-- compile multiple shaders
 				for _, file_path in ipairs(os.files(path.join("$(projectdir)", "shaders", shader_type.short.."_*.sc"))) do
@@ -66,7 +67,7 @@ target("xavine-graphics") do
 						..vformat(" -f "..file_path)
 						..vformat(" -o "..path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)", "assets", "shaders", shader_model.lang, path.basename(file_path)..".bin"))
 						..vformat(" --platform $(os)")
-						..vformat(" -p "..shader_model.id)
+						..vformat(" --profile "..(shader_model.dx and shader_model.shorter or "")..shader_model.id)
 						..vformat(" --type "..shader_type.long)
 						..vformat(" --varyingdef "..path.join("$(projectdir)", "shaders", "varying.def.sc"))
 						--..vformat(" --verbose")
