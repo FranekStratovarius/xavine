@@ -1,4 +1,5 @@
 add_rules("mode.debug", "mode.release")
+add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
 add_requires("bgfx 7816", "glfw 3.3.5", {system = false})
 add_requireconfs("bgfx")
 add_requireconfs("glfw", {configs = {shared = true}})
@@ -26,6 +27,7 @@ target("xavine-graphics") do
 	add_packages("glfw", "bgfx",{system = false})
 
 	after_build(function (target)-- list of shader models
+		-- shadercompilierung auf custom rule umbauen: https://xmake.io/#/manual/custom_rule
 		local shader_models = {
 			-- OpenGL ES Shading Language / WebGL (ESSL)
 			{lang = "essl", id = "320_es"},
@@ -60,7 +62,7 @@ target("xavine-graphics") do
 				-- compile multiple shaders
 				for _, file_path in ipairs(os.files(path.join("$(projectdir)", "shaders", shader_type.short.."_*.sc"))) do
 					os.exec(
-						path.join("tools", "bgfx", "$(os)", "$(arch)", "shadercRelease")
+						path.join(target:pkgs()["bgfx"]:installdir(), "bin", "shadercRelease")
 						..vformat(" -f "..file_path)
 						..vformat(" -o "..path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)", "assets", "shaders", shader_model.lang, path.basename(file_path)..".bin"))
 						..vformat(" --platform $(os)")

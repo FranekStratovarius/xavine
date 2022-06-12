@@ -24,6 +24,7 @@ target("xavine") do
 	after_build(function (target)
 		-- copy assets to build output folder
 		os.cp(path.join("assets"), path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)"))
+		print(target:pkgs()["bgfx"]:installdir())
 	end)
 
 	--[[
