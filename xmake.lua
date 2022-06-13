@@ -38,9 +38,9 @@ rule("shader") do
 			if shader_type == "fs" then
 				shader_tags = {long = "fragment", short = "p"}
 			elseif shader_type == "vs" then
-				shader_tags = {long = "vertex  ", short = "p"}
+				shader_tags = {long = "vertex  ", short = "v"}
 			elseif shader_type == "cs" then
-				shader_tags = {long = "compute ", short = "p"}
+				shader_tags = {long = "compute ", short = "c"}
 			else
 				return
 			end
