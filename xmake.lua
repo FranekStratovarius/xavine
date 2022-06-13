@@ -1,9 +1,9 @@
 add_rules("mode.debug", "mode.release")
 add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
 add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.5", {system = false})
-add_requireconfs("bgfx")
-add_requireconfs("flecs", {configs = {shared = true}})
-add_requireconfs("glfw", {configs = {shared = true}})
+add_requireconfs("bgfx", {configs = {shared = false}})
+add_requireconfs("flecs", {configs = {shared = false}})
+add_requireconfs("glfw", {configs = {shared = false}})
 
 rule("shader") do
 	set_extensions(".sc")
