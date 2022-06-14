@@ -1,22 +1,19 @@
 #include <stdio.h>
+#include <flecs.h>
 #include "graphics_init.h"
 
-int main(void)
-{
+int main(void) {
 	// initialization
+	flecs::world world;
 	xavine::Renderer* renderer;
-	try
-	{
+	try {
 		renderer = new xavine::Renderer();
-	}
-	catch(const char* message)
-	{
+	} catch (const char* message) {
 		fprintf(stderr, "initialization failed: %s\n", message);
 		return 1;
 	}
 
-	if (renderer == nullptr)
-	{
+	if (renderer == nullptr) {
 		fprintf(stderr, "no renderer created\n");
 		return 1;
 	}

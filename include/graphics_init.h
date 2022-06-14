@@ -30,16 +30,14 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
-struct PosColorVertex
-{
+struct PosColorVertex {
 	float x;
 	float y;
 	float z;
 	uint32_t abgr;
 };
 
-static PosColorVertex cubeVertices[] =
-{
+static PosColorVertex cubeVertices[] = {
 	{-1.0f,  1.0f,  1.0f, 0xff000000 },
 	{ 1.0f,  1.0f,  1.0f, 0xff0000ff },
 	{-1.0f, -1.0f,  1.0f, 0xff00ff00 },
@@ -50,8 +48,7 @@ static PosColorVertex cubeVertices[] =
 	{ 1.0f, -1.0f, -1.0f, 0xffffffff },
 };
 
-static const uint16_t cubeTriList[] =
-{
+static const uint16_t cubeTriList[] = {
 	0, 1, 2,
 	1, 3, 2,
 	4, 6, 5,
@@ -66,28 +63,26 @@ static const uint16_t cubeTriList[] =
 	6, 3, 7,
 };
 
-namespace xavine
-{
-	class Renderer
-	{
-		public:
-			Renderer();
-			~Renderer();
-			bool render();
+namespace xavine {
+class Renderer {
+	public:
+		Renderer();
+		~Renderer();
+		bool render();
 
-		private:
-			int width;
-			int height;
-			GLFWwindow* window;
+	private:
+		int width;
+		int height;
+		GLFWwindow* window;
 
-			const bgfx::ViewId kClearView = 0;
-			bgfx::VertexBufferHandle vbh;
-    		bgfx::IndexBufferHandle ibh; 
-			bgfx::ShaderHandle vsh;
-    		bgfx::ShaderHandle fsh;
-    		bgfx::ProgramHandle program;
+		const bgfx::ViewId kClearView = 0;
+		bgfx::VertexBufferHandle vbh;
+   		bgfx::IndexBufferHandle ibh; 
+		bgfx::ShaderHandle vsh;
+   		bgfx::ShaderHandle fsh;
+   		bgfx::ProgramHandle program;
 
-			unsigned int counter;
+		unsigned int counter;
 	};
 }
 

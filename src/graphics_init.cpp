@@ -1,11 +1,9 @@
 #include "graphics_init.h"
 
-bgfx::ShaderHandle loadShader(const char *FILENAME)
-{
+bgfx::ShaderHandle loadShader(const char *FILENAME) {
     const char* shaderPath = "???";
 
-    switch(bgfx::getRendererType())
-	{
+    switch (bgfx::getRendererType()) {
         case bgfx::RendererType::Noop:
         case bgfx::RendererType::Direct3D9:  shaderPath = "assets/shaders/dx9/";   break;
         case bgfx::RendererType::Direct3D11: shaderPath = "assets/shaders/dx11/";  break;
@@ -40,28 +38,28 @@ bgfx::ShaderHandle loadShader(const char *FILENAME)
 
 static bool s_showStats = false;
 
-static void glfw_errorCallback(int error, const char *description)
-{
+static void glfw_errorCallback(int error, const char *description) {
 	fprintf(stderr, "GLFW error %d: %s\n", error, description);
 }
 
-static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_F1 && action == GLFW_RELEASE)
+static void glfw_keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_F1 && action == GLFW_RELEASE) {
 		s_showStats = !s_showStats;
+	}
 }
 
 
-xavine::Renderer::Renderer()
-{
+xavine::Renderer::Renderer() {
 	// Create a GLFW window without an OpenGL context.
 	glfwSetErrorCallback(glfw_errorCallback);
-	if (!glfwInit())
+	if (!glfwInit()) {
 		throw "glfw initialization failed";
+	}
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "bgfx", nullptr, nullptr);
-	if (!window)
+	if (!window) {
 		throw "could not create glfw window";
+	}
 	glfwSetKeyCallback(window, glfw_keyCallback);
 	// Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
 	// Most graphics APIs must be used on the same thread that created the window.
@@ -71,8 +69,7 @@ xavine::Renderer::Renderer()
 #if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 # 		if ENTRY_CONFIG_USE_WAYLAND
 		wl_egl_window *win_impl = (wl_egl_window*)glfwGetWindowUserPointer(window);
-		if(!win_impl)
-		{
+		if(!win_impl) {
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 			struct wl_surface* surface = (struct wl_surface*)glfwGetWaylandWindow(window);
@@ -96,8 +93,9 @@ xavine::Renderer::Renderer()
 	init.resolution.width = (uint32_t)width;
 	init.resolution.height = (uint32_t)height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
-	if (!bgfx::init(init))
+	if (!bgfx::init(init)) {
 		throw "bgfx initialization failed";
+	}
 	// Set view 0 to the same dimensions as the window and to clear the color buffer.
 	//bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR);
 	bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0f, 0);
@@ -118,14 +116,12 @@ xavine::Renderer::Renderer()
 	counter = 0;
 }
 
-bool xavine::Renderer::render()
-{
+bool xavine::Renderer::render() {
 	glfwPollEvents();
 	// Handle window resize.
 	int oldWidth = width, oldHeight = height;
 	glfwGetWindowSize(window, &width, &height);
-	if (width != oldWidth || height != oldHeight)
-	{
+	if (width != oldWidth || height != oldHeight) {
 		bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
 		bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 	}
@@ -165,8 +161,7 @@ bool xavine::Renderer::render()
 	return !glfwWindowShouldClose(window);
 }
 
-xavine::Renderer::~Renderer()
-{
+xavine::Renderer::~Renderer() {
 	bgfx::shutdown();
 	glfwTerminate();
 }
