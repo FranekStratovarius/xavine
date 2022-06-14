@@ -78,7 +78,7 @@ target("xavine") do
 
 	-- if on windows, use msvc2019
 	if is_plat("windows") then
-		target:set("toolchains", "msvc", {vs = "2019"}
+		target:set("toolchains", "msvc", {vs = "2019"})
 	end
 
 	-- set bgfx platform defines
