@@ -102,6 +102,17 @@ target("xavine") do
 	after_build(function (target)
 		-- copy assets to build output folder
 		os.cp(path.join("assets"), path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)"))
+		-- copy dynamic libs to build output folder
+		for _, package in ipairs({
+			{name = "bgfx-mine", libname = "bgfx-shared-libRelease"},
+			{name = "flecs", libname = "flecs"},
+			{name = "glfw", libname = "glfw"}
+		}) do
+			os.cp(
+				path.join(target:pkgs()[package.name]:installdir(), "lib", "*"..package.libname..(is_plat("windows") and ".dll" or ".so")),
+				path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)")
+			)
+		end
 	end)
 
 	--[[
