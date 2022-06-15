@@ -1,9 +1,6 @@
 add_rules("mode.debug", "mode.release")
 add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
-add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.5", {system = false})
-add_requireconfs("bgfx", {configs = {shared = false}})
-add_requireconfs("flecs", {configs = {shared = false}})
-add_requireconfs("glfw", {configs = {shared = false}})
+add_requires("bgfx-mine 7816", "flecs v3.0.1-alpha", "glfw 3.3.6", {system = false, configs = {shared = true}})
 
 rule("shader") do
 	set_extensions(".sc")
@@ -48,7 +45,7 @@ rule("shader") do
 			-- compile shader
 			local targetfile = path.join(target:targetdir(), "assets", "shaders", shader_model.lang, path.basename(sourcefile)..".bin")
 			batchcmds:vrunv(
-				path.join(target:pkgs()["bgfx"]:installdir(), "bin", "shadercRelease")
+				path.join(target:pkgs()["bgfx-mine"]:installdir(), "bin", "shadercRelease")
 				.." -f "..sourcefile
 				.." -o "..targetfile
 				..vformat(" --platform $(os)")
@@ -95,7 +92,11 @@ target("xavine") do
 	add_rules("shader")
 	add_files("shaders/**.sc")
 
-	add_packages("bgfx", "flecs", "glfw")
+	add_packages("bgfx-mine", {links="bgfx-shared-libRelease"})
+	add_packages("flecs", {links = "flecs"})
+	add_packages("glfw", {links = "glfw"})
+	-- add folder of executable to LD_LIBRARY_PATH
+	add_rpathdirs(".")
 
 	-- copy asset folder after build
 	after_build(function (target)
