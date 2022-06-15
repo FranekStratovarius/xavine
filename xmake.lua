@@ -67,16 +67,14 @@ rule("shader") do
 end
 
 target("xavine") do
-
-	before_load(function (target)
-		-- if on windows, use msvc2019
-		if is_plat("windows") then
-			target:set("toolchains", "msvc", {vs = "2019"})
-		end
-	end)
+	if is_plat("windows") then
+		set_toolchains("msvc", {vs = "2019"})
+	end
 
 	set_kind("binary")
-	set_languages("cxx11")
+	if not is_plat("windows") then
+		set_languages("cxx11")
+	end
 
 	set_warnings("all")
 	set_optimize("fastest")

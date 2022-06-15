@@ -191,7 +191,7 @@ int main(void) {
     bgfx::ProgramHandle program = bgfx::createProgram(vertex_shader_handle, fragment_shader_handle, true);
 
 	// create entities
-	size_t n_testcubes = 3;
+	const size_t n_testcubes = 3;
 	flecs::entity testcubes[n_testcubes];
 	for (size_t i = 0; i < n_testcubes; i++) {
 		testcubes[i] = world.entity()
