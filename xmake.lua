@@ -67,6 +67,14 @@ rule("shader") do
 end
 
 target("xavine") do
+
+	before_load(function (target)
+		-- if on windows, use msvc2019
+		if is_plat("windows") then
+			target:set("toolchains", "msvc", {vs = "2019"})
+		end
+	end)
+
 	set_kind("binary")
 	set_languages("cxx11")
 
@@ -75,11 +83,6 @@ target("xavine") do
 
 	add_files("src/**.cpp")
 	add_includedirs("include",{public=true})
-
-	-- if on windows, use msvc2019
-	if is_plat("windows") then
-		target:set("toolchains", "msvc", {vs = "2019"})
-	end
 
 	-- set bgfx platform defines
 	if is_plat("linux") then
