@@ -1,5 +1,7 @@
 #include "graphics_init.h"
+#include "graphics.h"
 
+/*
 bgfx::ShaderHandle loadShader(const char *FILENAME) {
     const char* shaderPath = "???";
 
@@ -35,6 +37,7 @@ bgfx::ShaderHandle loadShader(const char *FILENAME) {
 
     return bgfx::createShader(mem);
 }
+*/
 
 static bool s_showStats = false;
 

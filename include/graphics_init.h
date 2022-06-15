@@ -77,10 +77,10 @@ class Renderer {
 
 		const bgfx::ViewId kClearView = 0;
 		bgfx::VertexBufferHandle vbh;
-   		bgfx::IndexBufferHandle ibh; 
+		bgfx::IndexBufferHandle ibh; 
 		bgfx::ShaderHandle vsh;
-   		bgfx::ShaderHandle fsh;
-   		bgfx::ProgramHandle program;
+		bgfx::ShaderHandle fsh;
+		bgfx::ProgramHandle program;
 
 		unsigned int counter;
 	};

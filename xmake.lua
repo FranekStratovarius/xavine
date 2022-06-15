@@ -70,11 +70,11 @@ target("xavine") do
 	set_kind("binary")
 	set_languages("cxx11")
 
-	add_files("src/**.cpp")
-	add_includedirs("include",{public=true})
-
 	set_warnings("all")
 	set_optimize("fastest")
+
+	add_files("src/**.cpp")
+	add_includedirs("include",{public=true})
 
 	-- if on windows, use msvc2019
 	if is_plat("windows") then
