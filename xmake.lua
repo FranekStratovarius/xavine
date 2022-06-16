@@ -92,9 +92,9 @@ target("xavine") do
 	add_rules("shader")
 	add_files("shaders/**.sc")
 
-	add_packages("bgfx-mine", {links="bgfx-shared-libRelease"})
+	add_packages("bgfx-mine", (not is_plat("windows")) and {links="bgfx-shared-libRelease"} or nil)
 	add_packages("flecs", {links = "flecs"})
-	add_packages("glfw", {links = "glfw"})
+	add_packages("glfw", {links = is_plat("windows") and "glfw3dll" or "glfw"})
 	-- add folder of executable to LD_LIBRARY_PATH
 	add_rpathdirs(".")
 
@@ -106,10 +106,10 @@ target("xavine") do
 		for _, package in ipairs({
 			{name = "bgfx-mine", libname = "bgfx-shared-libRelease"},
 			{name = "flecs", libname = "flecs"},
-			{name = "glfw", libname = "glfw"}
+			{name = "glfw", libname = is_plat("windows") and "glfw3" or "glfw"}
 		}) do
 			os.cp(
-				path.join(target:pkgs()[package.name]:installdir(), "lib", "*"..package.libname..(is_plat("windows") and ".dll" or ".so")),
+				path.join(target:pkgs()[package.name]:installdir(), (is_plat("windows") and "bin" or "lib"), "*"..package.libname..(is_plat("windows") and ".dll" or ".so")),
 				path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)")
 			)
 		end
