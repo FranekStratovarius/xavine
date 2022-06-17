@@ -212,15 +212,16 @@ int main(void) {
 	}
 
 	// show all entities
+	/*
 	world.each([](flecs::entity e, Position& p) {
 		std::cout << e.name() << ": {" << p.x << ", " << p.y << ", " << p.z << "}" << std::endl;
 	});
+	*/
 	
 	// run game loop	
 	while (!glfwWindowShouldClose(window)) {
 		// poll input events
 		glfwPollEvents();
-		//glfwWaitEventsTimeout(0.005);
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
 		glfwGetWindowSize(window, &width, &height);

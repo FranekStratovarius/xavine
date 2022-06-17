@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
-add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
-add_requires("bgfx-mine 7816", "flecs v3.0.1-alpha", "glfw 3.3.6", {system = false, configs = {shared = true}})
+--add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
+add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.6", {system = false, configs = {shared = true}})
 
 rule("shader") do
 	set_extensions(".sc")
@@ -45,7 +45,7 @@ rule("shader") do
 			-- compile shader
 			local targetfile = path.join(target:targetdir(), "assets", "shaders", shader_model.lang, path.basename(sourcefile)..".bin")
 			batchcmds:vrunv(
-				path.join(target:pkgs()["bgfx-mine"]:installdir(), "bin", "shadercRelease")
+				path.join(target:pkgs()["bgfx"]:installdir(), "bin", "shadercRelease")
 				.." -f "..sourcefile
 				.." -o "..targetfile
 				..vformat(" --platform $(os)")
@@ -92,7 +92,7 @@ target("xavine") do
 	add_rules("shader")
 	add_files("shaders/**.sc")
 
-	add_packages("bgfx-mine", (not is_plat("windows")) and {links="bgfx-shared-libRelease"} or nil)
+	add_packages("bgfx", (not is_plat("windows")) and {links="bgfx-shared-libRelease"} or nil)
 	add_packages("flecs", {links = "flecs"})
 	add_packages("glfw", {links = is_plat("windows") and "glfw3dll" or "glfw"})
 	-- add folder of executable to LD_LIBRARY_PATH
@@ -104,7 +104,7 @@ target("xavine") do
 		os.cp(path.join("assets"), path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)"))
 		-- copy dynamic libs to build output folder
 		for _, package in ipairs({
-			{name = "bgfx-mine", libname = "bgfx-shared-libRelease"},
+			{name = "bgfx", libname = "bgfx-shared-libRelease"},
 			{name = "flecs", libname = "flecs"},
 			{name = "glfw", libname = is_plat("windows") and "glfw3" or "glfw"}
 		}) do
