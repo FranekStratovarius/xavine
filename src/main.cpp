@@ -91,7 +91,9 @@ int main(void) {
 		throw "glfw initialization failed";
 	}
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "bgfx", nullptr, nullptr);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
+	
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "xavine", glfwGetPrimaryMonitor(), nullptr);
 	if (!window) {
 		throw "could not create glfw window";
 	}
@@ -144,8 +146,9 @@ int main(void) {
 	flecs::entity time_sys = world.system<Time_Data>()
 	.iter([](flecs::iter& it, Time_Data* td) {
 		for (size_t i : it) {
-			td[i].delta_time += it.delta_time() * 15.0f;
+			td[i].delta_time += it.delta_time() * 150.0f;
 		}
+		//printf("fps: %f\n", 1.0/it.delta_time());
 	});
 
 	// add time update system to pipeline
@@ -191,7 +194,9 @@ int main(void) {
     bgfx::ProgramHandle program = bgfx::createProgram(vertex_shader_handle, fragment_shader_handle, true);
 
 	// create entities
-	const size_t n_testcubes = 3;
+	const size_t side_length = 40;
+	const size_t depth_length = 100;
+	const size_t n_testcubes = side_length*depth_length;
 	flecs::entity testcubes[n_testcubes];
 	for (size_t i = 0; i < n_testcubes; i++) {
 		testcubes[i] = world.entity()
@@ -200,9 +205,11 @@ int main(void) {
 			.set<Time_Data>({0.0f});
 	}
 
-	testcubes[0].set<Position>({3, 0, 0});
-	testcubes[1].set<Position>({0, 0, 0});
-	testcubes[2].set<Position>({-3, 0, 0});
+	for (size_t i = 0; i < side_length; i++) {
+		for (size_t j = 0; j < depth_length; j++) {
+			testcubes[i * depth_length + j].set<Position>({(i - side_length / 2.0) * 4, 0, j * 4});
+		}
+	}
 
 	// show all entities
 	world.each([](flecs::entity e, Position& p) {
@@ -213,6 +220,7 @@ int main(void) {
 	while (!glfwWindowShouldClose(window)) {
 		// poll input events
 		glfwPollEvents();
+		//glfwWaitEventsTimeout(0.005);
 		// Handle window resize.
 		int oldWidth = width, oldHeight = height;
 		glfwGetWindowSize(window, &width, &height);
@@ -228,12 +236,12 @@ int main(void) {
 
 		// render
 		// set the view transform matrix
-		const bx::Vec3 at = {0.0f, 0.0f,  0.0f};
-		const bx::Vec3 eye = {0.0f, 0.0f, -5.0f};
+		const bx::Vec3 at = {0.0f, 0.0f,  30.0f};
+		const bx::Vec3 eye = {0.0f, 50.0f, -20.0f};
 		float view[16];
 		bx::mtxLookAt(view, eye, at);
 		float proj[16];
-		bx::mtxProj(proj, 60.0f, float(WINDOW_WIDTH) / float(WINDOW_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+		bx::mtxProj(proj, 60.0f, float(width) / float(height), 0.1f, 1000.0f, bgfx::getCaps()->homogeneousDepth);
 		bgfx::setViewTransform(0, view, proj);
 		// Enable stats or debug text.
 		bgfx::setDebug(BGFX_DEBUG_STATS);
