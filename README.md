@@ -21,3 +21,14 @@ spiel starten:
 ```
 xmake run
 ```
+
+## overlays:
+Mesa Vulkan Overlay
+```
+VK_INSTANCE_LAYERS=VK_LAYER_MESA_overlay VK_LAYER_MESA_OVERLAY_CONFIG=position=top-right xmake r
+```
+
+MangoHud
+```
+mangohud xmake r
+```
