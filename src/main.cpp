@@ -26,9 +26,6 @@
 #include <GLFW/glfw3native.h>
 #include "graphics.h"
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
-
 // Component types
 struct Position {
     double x;
@@ -92,8 +89,16 @@ int main(void) {
 	}
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+ 
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "xavine", glfwGetPrimaryMonitor(), nullptr);
+	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "xavine", monitor, nullptr);
 	if (!window) {
 		throw "could not create glfw window";
 	}
@@ -194,8 +199,8 @@ int main(void) {
     bgfx::ProgramHandle program = bgfx::createProgram(vertex_shader_handle, fragment_shader_handle, true);
 
 	// create entities
-	const size_t side_length = 40;
-	const size_t depth_length = 100;
+	const size_t side_length = 50;
+	const size_t depth_length = 200;
 	const size_t n_testcubes = side_length*depth_length;
 	flecs::entity testcubes[n_testcubes];
 	for (size_t i = 0; i < n_testcubes; i++) {
@@ -207,7 +212,7 @@ int main(void) {
 
 	for (size_t i = 0; i < side_length; i++) {
 		for (size_t j = 0; j < depth_length; j++) {
-			testcubes[i * depth_length + j].set<Position>({(i - side_length / 2.0) * 4, 0, j * 4});
+			testcubes[i * depth_length + j].set<Position>({(i - side_length / 2.0) * 4, 0, (double)j * 4});
 		}
 	}
 
@@ -237,12 +242,12 @@ int main(void) {
 
 		// render
 		// set the view transform matrix
-		const bx::Vec3 at = {0.0f, 0.0f,  30.0f};
+		const bx::Vec3 at = {0.0f, 10.0f,  30.0f};
 		const bx::Vec3 eye = {0.0f, 50.0f, -20.0f};
 		float view[16];
 		bx::mtxLookAt(view, eye, at);
 		float proj[16];
-		bx::mtxProj(proj, 60.0f, float(width) / float(height), 0.1f, 1000.0f, bgfx::getCaps()->homogeneousDepth);
+		bx::mtxProj(proj, 60.0f, float(width) / float(height), 0.1f, 2000.0f, bgfx::getCaps()->homogeneousDepth);
 		bgfx::setViewTransform(0, view, proj);
 		// Enable stats or debug text.
 		bgfx::setDebug(BGFX_DEBUG_STATS);
