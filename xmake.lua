@@ -73,7 +73,7 @@ target("xavine") do
 		set_languages("cxx11")
 	end
 
-	set_warnings("all")
+	set_warnings("all", "extra", "error")
 	set_optimize("fastest")
 
 	add_files("src/**.cpp")

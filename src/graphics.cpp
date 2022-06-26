@@ -17,6 +17,9 @@ bgfx::ShaderHandle loadShader(const char *FILENAME) {
 		case bgfx::RendererType::OpenGL:     shaderPath = "assets/shaders/glsl/";  break;
 		case bgfx::RendererType::OpenGLES:   shaderPath = "assets/shaders/essl/";  break;
 		case bgfx::RendererType::Vulkan:     shaderPath = "assets/shaders/spirv/"; break;
+		case bgfx::RendererType::Nvn:        break;
+		case bgfx::RendererType::WebGPU:     break;
+		case bgfx::RendererType::Count:      break;
 	}
 
 	size_t shaderLen = strlen(shaderPath);
