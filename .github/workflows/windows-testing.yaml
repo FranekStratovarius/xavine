@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: |
           xmake f -y --arch=${{ matrix.arch }}
-          xmake -vD -y
+          xmake -yvD
       - name: Package
         run: |
           cd build/windows/${{ matrix.arch }}/release/ && Compress-Archive -Path ./* xavine-windows-${{ matrix.arch }}.zip && mv xavine-windows-${{ matrix.arch }}.zip ../../../../

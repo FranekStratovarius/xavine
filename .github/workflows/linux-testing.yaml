@@ -25,10 +25,15 @@ jobs:
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
+      - name: Dependency Installation
+        run: |
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC sudo apt-get install -y build-essential cmake curl git libgl-dev libgl1-mesa-dev libx11-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxrender-dev x11proto-core-dev unzip
+
       - name: Build
         run: |
           xmake f -y --arch=${{ matrix.arch }}
-          xmake -vD -y
+          xmake -yvD
       - name: Package
         run: |
           cd build/linux/${{ matrix.arch }}/release/ && zip -r xavine-linux-${{ matrix.arch }}.zip * && mv xavine-linux-${{ matrix.arch }}.zip ../../../../

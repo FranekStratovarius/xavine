@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: |
           xmake f -y --arch=${{ matrix.arch }}
-          xmake -vD -y
+          xmake -yvD
       - name: Search
         run: |
           find .
