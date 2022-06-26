@@ -236,23 +236,27 @@ int main(void) {
 	flecs::entity move_sys = world.system<Position>()
 	.iter([input](flecs::iter& it, Position* pos){
 		// w = 25
+		const int scancode_w = glfwGetKeyScancode(GLFW_KEY_W);
 		// a = 38
+		const int scancode_a = glfwGetKeyScancode(GLFW_KEY_A);
 		// s = 39
+		const int scancode_s = glfwGetKeyScancode(GLFW_KEY_S);
 		// d = 40
+		const int scancode_d = glfwGetKeyScancode(GLFW_KEY_D);
 		for (size_t i : it) {
 			float speed = 10 * it.delta_time();
 
 			float dir_x = 0;
-			if (input->key_state[40].state) {	// d pressed
+			if (input->key_state[scancode_d].state) {	// d pressed
 				dir_x += speed;
-			} else if (input->key_state[38].state) {	// a pressed
+			} else if (input->key_state[scancode_a].state) {	// a pressed
 				dir_x -= speed;
 			}
 
 			float dir_z = 0;
-			if (input->key_state[25].state) {	// w pressed
+			if (input->key_state[scancode_w].state) {	// w pressed
 				dir_z += speed;
-			} else if (input->key_state[39].state) {	// s pressed
+			} else if (input->key_state[scancode_s].state) {	// s pressed
 				dir_z -= speed;
 			}
 
