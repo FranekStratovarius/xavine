@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-2019]
-        arch: [x64, x86]
+#        arch: [x64, x86]
 
     runs-on: ${{ matrix.os }}
 
@@ -27,8 +27,8 @@ jobs:
           xmake-version: latest
       - name: Build
         run: |
-          xmake f -y --arch=${{ matrix.arch }}
-          xmake -yvD
+#          xmake f -y --arch=${{ matrix.arch }}
+          xmake -y
       - name: Package
         run: |
           cd build/windows/${{ matrix.arch }}/release/ && Compress-Archive -Path ./* xavine-windows-${{ matrix.arch }}.zip && mv xavine-windows-${{ matrix.arch }}.zip ../../../../

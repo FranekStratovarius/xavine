@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04]
-        arch: [x86_64]
+#        arch: [x86_64]
 
     runs-on: ${{ matrix.os }}
 
@@ -32,8 +32,8 @@ jobs:
 
       - name: Build
         run: |
-          xmake f -y --arch=${{ matrix.arch }}
-          xmake -yvD
+#          xmake f -y --arch=${{ matrix.arch }}
+          xmake -y
       - name: Package
         run: |
           cd build/linux/${{ matrix.arch }}/release/ && zip -r xavine-linux-${{ matrix.arch }}.zip * && mv xavine-linux-${{ matrix.arch }}.zip ../../../../
