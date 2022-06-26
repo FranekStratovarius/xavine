@@ -27,7 +27,7 @@ jobs:
           xmake-version: latest
       - name: Build
         run: |
-          xmake f --arch=${{ matrix.arch }}
+          xmake f -y --arch=${{ matrix.arch }}
           xmake -vD -y
       - name: Search
         run: |
