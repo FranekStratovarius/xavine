@@ -32,7 +32,6 @@ jobs:
 
       - name: Build
         run: |
-#          xmake f -y --arch=${{ matrix.arch }}
           xmake -y
       - name: Package
         run: |
