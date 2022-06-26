@@ -26,9 +26,6 @@
 #include <GLFW/glfw3native.h>
 #include "graphics.h"
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
-
 // Component types
 struct Position {
     double x;
@@ -52,6 +49,28 @@ struct PosColorVertex {
 	float y;
 	float z;
 	uint32_t abgr;
+};
+
+// input datas
+struct KeyState {
+	bool pressed = false;
+	bool released = false;
+	bool state = false;
+};
+
+struct MouseCoord {
+	float x = 0;
+	float y = 0;
+};
+
+struct MouseState {
+	KeyState mouse_key_state[8];	// glfw can get 8 mouse buttons
+	MouseCoord position;
+};
+
+struct Input {
+	MouseState mouse_state;
+	KeyState key_state[128];	// some keyboards can have up to 110 keys
 };
 
 static PosColorVertex cubeVertices[] = {
@@ -80,8 +99,27 @@ static const uint16_t cubeTriList[] = {
 	6, 3, 7,
 };
 
-static void glfw_errorCallback(int error, const char *description) {
+void glfw_errorCallback(int error, const char* description) {
 	fprintf(stderr, "GLFW error %d: %s\n", error, description);
+}
+
+void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	Input* input = (Input*)glfwGetWindowUserPointer(window);
+
+	if (action == GLFW_PRESS) {
+		input->key_state[scancode].state = true;
+	} else if (action == GLFW_RELEASE) {
+		input->key_state[scancode].state = false;
+	}
+
+	printf("key: %d, state: %d\n", scancode, input->key_state[scancode].state);
+}
+
+void glfw_cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+	float sensitivity = 0.001f;
+	Input* input = (Input*)glfwGetWindowUserPointer(window);
+	input->mouse_state.position.x = (float)xpos * sensitivity;
+	input->mouse_state.position.y = (float)ypos * sensitivity;
 }
 
 int main(void) {
@@ -91,7 +129,17 @@ int main(void) {
 		throw "glfw initialization failed";
 	}
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "bgfx", nullptr, nullptr);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+ 
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	
+	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "xavine", monitor, nullptr);
 	if (!window) {
 		throw "could not create glfw window";
 	}
@@ -139,13 +187,21 @@ int main(void) {
 
 	// initialization
 	flecs::world world;
+	Input input_local;
+	Input* input = &input_local;
+	glfwSetWindowUserPointer(window, input);
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_FALSE);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetKeyCallback(window, glfw_key_callback);
+	glfwSetCursorPosCallback(window, glfw_cursor_position_callback);
 
 	// create time update system
 	flecs::entity time_sys = world.system<Time_Data>()
 	.iter([](flecs::iter& it, Time_Data* td) {
 		for (size_t i : it) {
-			td[i].delta_time += it.delta_time() * 15.0f;
+			td[i].delta_time += it.delta_time() * 150.0f;
 		}
+		//printf("fps: %f\n", 1.0/it.delta_time());
 	});
 
 	// add time update system to pipeline
@@ -176,6 +232,38 @@ int main(void) {
 	// add render system to pipeline
 	render_sys.add(flecs::OnUpdate);
 
+	// create move system
+	flecs::entity move_sys = world.system<Position>()
+	.iter([input](flecs::iter& it, Position* pos){
+		// w = 25
+		// a = 38
+		// s = 39
+		// d = 40
+		for (size_t i : it) {
+			float speed = 10 * it.delta_time();
+
+			float dir_x = 0;
+			if (input->key_state[40].state) {	// d pressed
+				dir_x += speed;
+			} else if (input->key_state[38].state) {	// a pressed
+				dir_x -= speed;
+			}
+
+			float dir_z = 0;
+			if (input->key_state[25].state) {	// w pressed
+				dir_z += speed;
+			} else if (input->key_state[39].state) {	// s pressed
+				dir_z -= speed;
+			}
+
+			pos[i].x += dir_x;
+			pos[i].z += dir_z;
+		}
+	});
+
+	// add move system to pipeline
+	move_sys.add(flecs::OnUpdate);
+
 	// load mesh and shader
 	bgfx::VertexLayout pcvDecl;
 	pcvDecl.begin()
@@ -191,7 +279,9 @@ int main(void) {
     bgfx::ProgramHandle program = bgfx::createProgram(vertex_shader_handle, fragment_shader_handle, true);
 
 	// create entities
-	size_t n_testcubes = 3;
+	const size_t side_length = 50;
+	const size_t depth_length = 50;
+	const size_t n_testcubes = side_length*depth_length;
 	flecs::entity testcubes[n_testcubes];
 	for (size_t i = 0; i < n_testcubes; i++) {
 		testcubes[i] = world.entity()
@@ -200,14 +290,18 @@ int main(void) {
 			.set<Time_Data>({0.0f});
 	}
 
-	testcubes[0].set<Position>({3, 0, 0});
-	testcubes[1].set<Position>({0, 0, 0});
-	testcubes[2].set<Position>({-3, 0, 0});
+	for (size_t i = 0; i < side_length; i++) {
+		for (size_t j = 0; j < depth_length; j++) {
+			testcubes[i * depth_length + j].set<Position>({(i - side_length / 2.0) * 4, 0, (double)j * 4});
+		}
+	}
 
 	// show all entities
+	/*
 	world.each([](flecs::entity e, Position& p) {
 		std::cout << e.name() << ": {" << p.x << ", " << p.y << ", " << p.z << "}" << std::endl;
 	});
+	*/
 	
 	// run game loop	
 	while (!glfwWindowShouldClose(window)) {
@@ -228,13 +322,20 @@ int main(void) {
 
 		// render
 		// set the view transform matrix
-		const bx::Vec3 at = {0.0f, 0.0f,  0.0f};
-		const bx::Vec3 eye = {0.0f, 0.0f, -5.0f};
+		//const bx::Vec3 at = {0.0f, 10.0f,  30.0f};
+		//const bx::Vec3 eye = {0.0f, 50.0f, -30.0f};
+		const bx::Vec3 at = {0.0f, 50.0f,  30.0f};
+		const bx::Vec3 eye = {0.0f, 50.0f, -30.0f};
+		float mtx_rotate[16];
+		bx::mtxIdentity(mtx_rotate);
+		bx::mtxRotateZYX(mtx_rotate, input->mouse_state.position.y, input->mouse_state.position.x, 0.0f);
 		float view[16];
 		bx::mtxLookAt(view, eye, at);
+		float mtx_result[16];
+		bx::mtxMul(mtx_result, view, mtx_rotate);
 		float proj[16];
-		bx::mtxProj(proj, 60.0f, float(WINDOW_WIDTH) / float(WINDOW_HEIGHT), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-		bgfx::setViewTransform(0, view, proj);
+		bx::mtxProj(proj, 60.0f, float(width) / float(height), 0.1f, 2000.0f, bgfx::getCaps()->homogeneousDepth);
+		bgfx::setViewTransform(0, mtx_result, proj);
 		// Enable stats or debug text.
 		bgfx::setDebug(BGFX_DEBUG_STATS);
 		// Advance to next frame. Process submitted rendering primitives.

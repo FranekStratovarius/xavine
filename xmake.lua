@@ -1,9 +1,6 @@
 add_rules("mode.debug", "mode.release")
-add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
-add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.5", {system = false})
-add_requireconfs("bgfx", {configs = {shared = false}})
-add_requireconfs("flecs", {configs = {shared = false}})
-add_requireconfs("glfw", {configs = {shared = false}})
+--add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
+add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.6", {system = false, configs = {shared = true}})
 
 rule("shader") do
 	set_extensions(".sc")
@@ -67,19 +64,20 @@ rule("shader") do
 end
 
 target("xavine") do
-	set_kind("binary")
-	set_languages("cxx11")
+	if is_plat("windows") then
+		set_toolchains("msvc", {vs = "2019"})
+	end
 
-	set_warnings("all")
+	set_kind("binary")
+	if not is_plat("windows") then
+		set_languages("cxx11")
+	end
+
+	set_warnings("all", "extra", "error")
 	set_optimize("fastest")
 
 	add_files("src/**.cpp")
 	add_includedirs("include",{public=true})
-
-	-- if on windows, use msvc2019
-	if is_plat("windows") then
-		target:set("toolchains", "msvc", {vs = "2019"})
-	end
 
 	-- set bgfx platform defines
 	if is_plat("linux") then
@@ -94,12 +92,27 @@ target("xavine") do
 	add_rules("shader")
 	add_files("shaders/**.sc")
 
-	add_packages("bgfx", "flecs", "glfw")
+	add_packages("bgfx", (not is_plat("windows")) and {links="bgfx-shared-libRelease"} or nil)
+	add_packages("flecs", {links = "flecs"})
+	add_packages("glfw", {links = is_plat("windows") and "glfw3dll" or "glfw"})
+	-- add folder of executable to LD_LIBRARY_PATH
+	add_rpathdirs(".")
 
 	-- copy asset folder after build
 	after_build(function (target)
 		-- copy assets to build output folder
 		os.cp(path.join("assets"), path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)"))
+		-- copy dynamic libs to build output folder
+		for _, package in ipairs({
+			{name = "bgfx", libname = "bgfx-shared-libRelease"},
+			{name = "flecs", libname = "flecs"},
+			{name = "glfw", libname = is_plat("windows") and "glfw3" or "glfw"}
+		}) do
+			os.cp(
+				path.join(target:pkgs()[package.name]:installdir(), (is_plat("windows") and "bin" or "lib"), "*"..package.libname..(is_plat("windows") and ".dll" or ".so")),
+				path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)")
+			)
+		end
 	end)
 
 	--[[
