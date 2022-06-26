@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - testing
+  push:
+    branches:
+      - dev
 
 jobs:
   build:
@@ -25,7 +28,7 @@ jobs:
       - name: Build
         run: |
           xmake f --arch=${{ matrix.arch }}
-          xmake -vD
+          xmake -vD -y
       - name: Package
         run: |
           cd build/windows/${{ matrix.arch }}/release/ && Compress-Archive -Path ./* xavine-windows-${{ matrix.arch }}.zip && mv xavine-windows-${{ matrix.arch }}.zip ../../../../
