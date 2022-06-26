@@ -1,0 +1,43 @@
+name: Windows
+
+on:
+  pull_request:
+    branches:
+      - testing
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-2019]
+        arch: [x64, x86]
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Windows-${{ matrix.kind }}
+        cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+      - name: Build
+        run: |
+          xmake f --arch=${{ matrix.arch }}
+          xmake -vD
+      - name: Package
+        run: |
+          cd build/windows/${{ matrix.arch }}/release/ && Compress-Archive -Path ./* xavine-windows-${{ matrix.arch }}.zip && mv xavine-windows-${{ matrix.arch }}.zip ../../../../
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: |
+            xavine-windows-${{ matrix.arch }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          generateReleaseNotes: true
+          tag: ${{ github.event.pull_request.title }}
+          omitBodyDuringUpdate: true
+          prerelease: true
+          replacesArtifacts: true
