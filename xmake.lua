@@ -108,7 +108,7 @@ target("xavine") do
 			{name = "glfw", libname = is_plat("windows") and "glfw3" or "glfw"}
 		}) do
 			os.cp(
-				path.join(target:pkgs()[package.name]:installdir(), (is_plat("windows") and "bin" or "lib"), "*"..package.libname..(is_plat("windows") and ".dll" or ".so")),
+				path.join(target:pkgs()[package.name]:installdir(), (is_plat("windows") and "bin" or "lib"), "*"..package.libname..(is_plat("windows") and ".dll" or (is_plat("macosx") and ".dylib" or ".so"))),
 				path.join("$(buildir)", "$(os)", "$(arch)", "$(mode)")
 			)
 		end
