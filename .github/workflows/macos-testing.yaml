@@ -28,11 +28,6 @@ jobs:
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
-      - name: Use own Repo
-        run: |
-          xmake repo --add xavine-repo https://github.com/FranekStratovarius/xmake-repo.git
-          xmake repo --remove xmake-repo
-          xmake repo -u
       - name: Build
         run: |
           xmake -y
