@@ -6,6 +6,7 @@ if is_plat("macosx") then
 else
 	add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.6", {system = false, configs = {shared = true}})
 end
+includes("modules/flecs-lua")
 
 rule("shader") do
 	set_extensions(".sc")
@@ -69,9 +70,14 @@ rule("shader") do
 end
 
 target("xavine") do
+	-- should not be needed anymore
+	--[[
 	if is_plat("windows") then
 		set_toolchains("msvc", {vs = "2019"})
 	end
+	--]]
+
+	add_deps("flecs-lua")
 
 	set_kind("binary")
 	if not is_plat("windows") then
