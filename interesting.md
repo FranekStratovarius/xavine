@@ -1,6 +1,11 @@
 # interessante ressourcen
 - https://github.com/SFTtech/nyan
 - https://github.com/a1studmuffin/SpaceshipGenerator
+- https://docs.mod.io/
+- https://github.com/g-truc/glm
+- https://github.com/lettier/3d-game-shaders-for-beginners
+- https://github.com/fmtlib/fmt
+- https://github.com/jrouwe/JoltPhysics
 # xmake-repo
 - box2d
 - bullet3
@@ -8,7 +13,7 @@
 - imgui
 - libyaml
 - libzip
-- luas/luajit
+- lua/luajit
 - meowhash
 - miniaudio
 - stb

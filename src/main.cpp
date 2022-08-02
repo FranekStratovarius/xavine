@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <iostream>
+#include <thread>
+
 #include <flecs.h>
+#include <flecs_os_api_stdcpp.h>
 
 #include <bx/bx.h>
 #include <bx/math.h>
@@ -40,7 +43,7 @@ struct Render_Data {
 };
 
 struct Time_Data {
-	FLECS_FLOAT delta_time;
+	float delta_time;
 };
 
 // cube datas
@@ -186,6 +189,7 @@ int main(void) {
 	bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
 	// initialization
+	stdcpp_set_os_api();
 	flecs::world world;
 	Input input_local;
 	Input* input = &input_local;
@@ -194,6 +198,10 @@ int main(void) {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(window, glfw_key_callback);
 	glfwSetCursorPosCallback(window, glfw_cursor_position_callback);
+	world.set_target_fps(mode->refreshRate);
+	unsigned int max_thread_count = std::thread::hardware_concurrency();
+	ecs_set_threads(world, max_thread_count);
+	printf("threads: %d\n", world.get_threads());
 
 	// create time update system
 	flecs::entity time_sys = world.system<Time_Data>()
@@ -209,24 +217,30 @@ int main(void) {
 
 	// create render system
 	flecs::entity render_sys = world.system<Position, Render_Data, Time_Data>()
-	.each([](flecs::entity e, Position& p, Render_Data& rd, Time_Data& td) {
-		float mtx_rotate[16];
-		bx::mtxIdentity(mtx_rotate);
-		
-		bx::mtxRotateXYZ(mtx_rotate, td.delta_time * 0.01f, td.delta_time * 0.01f, 0.0f);
-		float mtx_translate[16];
-		bx::mtxIdentity(mtx_translate);
-		bx::mtxTranslate(mtx_translate, p.x, p.y, p.z);
+	//.each([](flecs::entity e, Position& p, Render_Data& rd, Time_Data& td) {
+	.iter([](flecs::iter& it, Position* p, Render_Data* rd, Time_Data* td) {
+		bgfx::Encoder* encoder = bgfx::begin();
+		if (encoder == nullptr) {return;}
+		for (size_t i : it) {
+			float mtx_rotate[16];
+			bx::mtxIdentity(mtx_rotate);
+			
+			bx::mtxRotateXYZ(mtx_rotate, td[i].delta_time * 0.01f, td[i].delta_time * 0.01f, 0.0f);
+			float mtx_translate[16];
+			bx::mtxIdentity(mtx_translate);
+			bx::mtxTranslate(mtx_translate, p[i].x, p[i].y, p[i].z);
 
-		float mtx_result[16];
-		bx::mtxMul(mtx_result, mtx_rotate, mtx_translate);
+			float mtx_result[16];
+			bx::mtxMul(mtx_result, mtx_rotate, mtx_translate);
 
-		bgfx::setTransform(mtx_result); 
+			encoder->setTransform(mtx_result); 
 
-		bgfx::setVertexBuffer(0, rd.vertex_buffer_handle);
-		bgfx::setIndexBuffer(rd.index_buffer_handle);
+			encoder->setVertexBuffer(0, rd[i].vertex_buffer_handle);
+			encoder->setIndexBuffer(rd[i].index_buffer_handle);
 
-		bgfx::submit(0, rd.program);
+			encoder->submit(0, rd[i].program);
+		}
+		bgfx::end(encoder);
 	});
 
 	// add render system to pipeline

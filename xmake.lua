@@ -1,12 +1,12 @@
 add_rules("mode.debug", "mode.release")
---add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo master")
+--add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo dev")
+add_repositories("xavine-xrepo testrepo")
 if is_plat("macosx") then
 	-- use static libs on macosx
-	add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.6", {system = false})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.6", {system = false})
 else
-	add_requires("bgfx 7816", "flecs v3.0.1-alpha", "glfw 3.3.6", {system = false, configs = {shared = true}})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.6", {system = false, configs = {shared = true}})
 end
-includes("modules/flecs-lua")
 
 rule("shader") do
 	set_extensions(".sc")
@@ -70,15 +70,6 @@ rule("shader") do
 end
 
 target("xavine") do
-	-- should not be needed anymore
-	--[[
-	if is_plat("windows") then
-		set_toolchains("msvc", {vs = "2019"})
-	end
-	--]]
-
-	add_deps("flecs-lua")
-
 	set_kind("binary")
 	if not is_plat("windows") then
 		set_languages("cxx11")
@@ -98,6 +89,7 @@ target("xavine") do
 	elseif is_plat("macosx") then
 		add_defines("BX_PLATFORM_OSX")
 	end
+	add_defines("BGFX_CONFIG_MULTITHREADED=1")
 
 	add_rules("shader")
 	add_files("shaders/**.sc")
