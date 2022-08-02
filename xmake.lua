@@ -82,7 +82,7 @@ target("xavine") do
 
 	-- set bgfx platform defines
 	if is_plat("linux") then
-		add_syslinks("dl")
+		add_syslinks("dl", "pthread")
 		add_defines("BX_PLATFORM_LINUX")
 	elseif is_plat("windows") then
 		add_defines("BX_PLATFORM_WINDOWS")
