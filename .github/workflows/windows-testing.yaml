@@ -27,7 +27,8 @@ jobs:
           xmake-version: latest
       - name: Build
         run: |
-          xmake -y
+          xmake config --yes --arch=${{ matrix.arch }} --mode=release --verbose
+          xmake build --yes --verbose
       - name: Package
         run: |
           cd build/windows/${{ matrix.arch }}/release/ && Compress-Archive -Path ./* xavine-windows-${{ matrix.arch }}.zip && mv xavine-windows-${{ matrix.arch }}.zip ../../../../

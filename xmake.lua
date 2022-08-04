@@ -75,7 +75,26 @@ target("xavine") do
 		set_languages("cxx11")
 	end
 
-	set_optimize("fastest")
+	set_warnings("everything")
+
+	if is_mode("debug") then
+		-- add macro: DEBUG
+		add_defines("DEBUG")
+		-- enable debug symbols
+		set_symbols("debug")
+		-- disable optimization
+		set_optimize("none")
+	elseif is_mode("release") then
+		-- mark symbols visibility as hidden
+		set_symbols("hidden")
+		-- strip all symbols
+		set_strip("all")
+		-- enable optimization
+		set_optimize("fastest")
+		-- fomit frame pointer
+		add_cxflags("-fomit-frame-pointer")
+		add_mxflags("-fomit-frame-pointer")
+	end
 
 	add_files("src/**.cpp")
 	add_includedirs("include",{public=true})

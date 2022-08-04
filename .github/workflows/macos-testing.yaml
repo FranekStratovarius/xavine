@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest]
-        arch: [x86_64, arm64]
+        arch: [x86_64] #, arm64]
     permissions:
       contents: write
 
@@ -26,8 +26,8 @@ jobs:
           xmake-version: latest
       - name: Build
         run: |
-          xmake f -y --arch=${{ matrix.arch }}
-          xmake -y
+          xmake config --yes --arch=${{ matrix.arch }} --mode=release --verbose
+          xmake build --yes --verbose
       - name: Search
         run: |
           find .
