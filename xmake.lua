@@ -3,9 +3,9 @@ add_rules("mode.debug", "mode.release")
 --add_repositories("xavine-xrepo testrepo")
 if is_plat("macosx") then
 	-- use static libs on macosx
-	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.6", {system = false})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", {system = false})
 else
-	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.6", {system = false, configs = {shared = true}})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", {system = false, configs = {shared = true}})
 end
 
 rule("shader") do
