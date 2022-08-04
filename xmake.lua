@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 --add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo dev")
-add_repositories("xavine-xrepo testrepo")
+--add_repositories("xavine-xrepo testrepo")
 if is_plat("macosx") then
 	-- use static libs on macosx
 	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.6", {system = false})
