@@ -26,8 +26,8 @@ jobs:
           xmake-version: latest
       - name: Build
         run: |
-          xmake config --yes --arch=${{ matrix.arch }} --mode=release --verbose
-          xmake build --yes --verbose
+          xmake config --yes --arch=${{ matrix.arch }} --mode=release
+          xmake build --yes
       - name: Search
         run: |
           find .

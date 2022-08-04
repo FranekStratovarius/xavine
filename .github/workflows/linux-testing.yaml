@@ -31,8 +31,8 @@ jobs:
 
       - name: Build
         run: |
-          xmake config --yes --arch=${{ matrix.arch }} --mode=release --verbose
-          xmake build --yes --verbose
+          xmake config --yes --arch=${{ matrix.arch }} --mode=release
+          xmake build --yes
       - name: Package
         run: |
           cd build/linux/${{ matrix.arch }}/release/ && zip -r xavine-linux-${{ matrix.arch }}.zip * && mv xavine-linux-${{ matrix.arch }}.zip ../../../../
