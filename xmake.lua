@@ -75,7 +75,7 @@ target("xavine") do
 		set_languages("cxx11")
 	end
 
-	set_warnings("everything")
+	set_warnings("all")
 
 	if is_mode("debug") then
 		-- add macro: DEBUG
