@@ -3,12 +3,13 @@
 #include <bgfx/bgfx.h>
 
 #include "systems/cubes.h"
-#include "components/cube.h"
+#include "components/general.h"
+#include "components/cubes.h"
 
-void add_cube_systems(flecs::world* world) {
+void xavine::add_cube_systems(flecs::world* world) {
 	// create time update system
-	flecs::entity time_sys = world->system<Time_Data>()
-	.iter([](flecs::iter& it, Time_Data* td) {
+	flecs::entity time_sys = world->system<xavine::Time_Data>()
+	.iter([](flecs::iter& it, xavine::Time_Data* td) {
 		for (size_t i : it) {
 			td[i].delta_time += it.delta_time() * 150.0f;
 		}
@@ -18,10 +19,9 @@ void add_cube_systems(flecs::world* world) {
 	// add time update system to pipeline
 	time_sys.add(flecs::PreUpdate);
 
-		// create render system
-	flecs::entity render_sys = world->system<Position, Render_Data, Time_Data>()
-	//.each([](flecs::entity e, Position& p, Render_Data& rd, Time_Data& td) {
-	.iter([](flecs::iter& it, Position* p, Render_Data* rd, Time_Data* td) {
+	// create render system
+	flecs::entity render_sys = world->system<xavine::Position, xavine::Render_Data, xavine::Time_Data>()
+	.iter([](flecs::iter& it, xavine::Position* p, xavine::Render_Data* rd, xavine::Time_Data* td) {
 		bgfx::Encoder* encoder = bgfx::begin();
 		if (encoder == nullptr) {return;}
 		for (size_t i : it) {
@@ -31,7 +31,7 @@ void add_cube_systems(flecs::world* world) {
 			bx::mtxRotateXYZ(mtx_rotate, td[i].delta_time * 0.01f, td[i].delta_time * 0.01f, 0.0f);
 			float mtx_translate[16];
 			bx::mtxIdentity(mtx_translate);
-			bx::mtxTranslate(mtx_translate, p[i].x, p[i].y, p[i].z);
+			bx::mtxTranslate(mtx_translate, p[i].position_vec.x, p[i].position_vec.y, p[i].position_vec.z);
 
 			float mtx_result[16];
 			bx::mtxMul(mtx_result, mtx_rotate, mtx_translate);

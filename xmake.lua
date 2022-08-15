@@ -3,9 +3,9 @@ add_rules("mode.debug", "mode.release")
 --add_repositories("xavine-xrepo testrepo")
 if is_plat("macosx") then
 	-- use static libs on macosx
-	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", {system = false})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", "glm 0.9.9+8", {system = false})
 else
-	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", {system = false, configs = {shared = true}})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", "glm 0.9.9+8", {system = false, configs = {shared = true}})
 end
 
 rule("shader") do
@@ -108,18 +108,22 @@ target("xavine") do
 	elseif is_plat("macosx") then
 		add_defines("BX_PLATFORM_OSX")
 	end
+	-- set bgfx to multithreaded
 	add_defines("BGFX_CONFIG_MULTITHREADED=1")
+	-- enable experimental features fro glm https://github.com/g-truc/glm/blob/master/manual.md#-74-should-i-use-gtx-extensions
+	add_defines("GLM_ENABLE_EXPERIMENTAL")
 
 	add_rules("shader")
 	add_files("shaders/**.sc")
 
 	if is_plat("macosx") then
 		-- link statically on macosx
-		add_packages("bgfx", "flecs", "glfw")
+		add_packages("bgfx", "flecs", "glfw", "glm")
 	else
 		add_packages("bgfx", (not is_plat("windows")) and {links="bgfx-shared-libRelease"} or nil)
 		add_packages("flecs", {links = "flecs"})
 		add_packages("glfw", {links = is_plat("windows") and "glfw3dll" or "glfw"})
+		add_packages("glm")
 		-- add folder of executable to LD_LIBRARY_PATH
 		add_rpathdirs(".")
 	end

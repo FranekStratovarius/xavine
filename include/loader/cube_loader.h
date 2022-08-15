@@ -1,3 +1,5 @@
 #include <flecs.h>
 
-void load_cubes(flecs::world* world);
+namespace xavine {
+	void load_cubes(flecs::world* world);
+}

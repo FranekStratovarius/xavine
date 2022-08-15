@@ -2,12 +2,14 @@
 #include <iostream>
 #include <thread>
 
-#include "components/cube.h"
+#include "components/general.h"
+#include "components/cubes.h"
+#include "components/player.h"
 #include "systems/cubes.h"
-#include "systems/graphics.h"
 #include "systems/player.h"
 #include "loader/cube_loader.h"
 
+#include "graphics.h"
 #include "window.h"
 
 int main(void) {
@@ -25,8 +27,17 @@ int main(void) {
 	printf("threads: %d\n", world.get_threads());
 
 	// fill game world
-	add_cube_systems(&world);
-	load_cubes(&world);
+	xavine::add_cube_systems(&world);
+	xavine::load_cubes(&world);
+
+	xavine::add_player_systems(&world);
+	flecs::entity player = world.entity()
+		.add<xavine::Player>()
+		.set<xavine::Position>({{0, 0, 0}})
+		.set<xavine::Rotation>({});
+
+	// set input singleton
+	world.set<xavine::Input*>(window.get_input());
 	
 	// run game loop	
 	while (!window.should_close()) {
@@ -37,7 +48,7 @@ int main(void) {
 		// run the ecs world
 		world.progress();
 		// render frame
-		window.render_frame();
+		window.render_frame(&world);
 	}
 
 	return 0;

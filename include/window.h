@@ -24,29 +24,9 @@
 #endif //
 #include <GLFW/glfw3native.h>
 
+#include "components/general.h"
+
 namespace xavine {
-	// input datas
-	struct KeyState {
-		bool pressed = false;
-		bool released = false;
-		bool state = false;
-	};
-
-	struct MouseCoord {
-		float x = 0;
-		float y = 0;
-	};
-
-	struct MouseState {
-		KeyState mouse_key_state[8];	// glfw can get 8 mouse buttons
-		MouseCoord position;
-	};
-
-	struct Input {
-		MouseState mouse_state;
-		KeyState key_state[128];	// some keyboards can have up to 110 keys
-	};
-
 	class Window {
 		public:
 			Window();
@@ -56,7 +36,10 @@ namespace xavine {
 			bool should_close();
 			void poll_events();
 			void empty_draw_call();
-			void render_frame();
+			void render_frame(flecs::world* world);
+			Input* get_input();
+			int get_width();
+			int get_height();
 		private:
 			char* window_name;
 			GLFWwindow* window;
