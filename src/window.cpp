@@ -20,7 +20,7 @@ void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, in
 	} else if (action == GLFW_RELEASE) {
 		input->key_state[scancode].state = false;
 	}
-	printf("key: %d, state: %d\n", scancode, input->key_state[scancode].state);
+	//printf("key: %d, state: %d\n", scancode, input->key_state[scancode].state);
 }
 
 void glfw_cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {

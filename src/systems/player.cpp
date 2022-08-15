@@ -89,7 +89,7 @@ void xavine::add_player_systems(flecs::world* world) {
 			pos[i].position_vec = bx::add(pos[i].position_vec, look_at_right);
 			pos[i].position_vec = bx::add(pos[i].position_vec, look_at_up);
 
-			printf("x: %4f, y: %4f, z: %4f\n", pos[i].position_vec.x, pos[i].position_vec.y, pos[i].position_vec.z);
+			//printf("x: %4f, y: %4f, z: %4f\n", pos[i].position_vec.x, pos[i].position_vec.y, pos[i].position_vec.z);
 		}
 	});
 

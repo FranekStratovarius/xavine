@@ -21,7 +21,6 @@ int main(void) {
 	// create flecs world
 	flecs::world world;
 	// set settings for flecs world
-	world.set_target_fps(window.get_monitor_refresh_rate());
 	unsigned int max_thread_count = std::thread::hardware_concurrency();
 	ecs_set_threads(world, max_thread_count);
 	printf("threads: %d\n", world.get_threads());

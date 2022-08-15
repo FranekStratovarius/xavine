@@ -23,9 +23,9 @@ void xavine::load_cubes(flecs::world* world) {
     bgfx::ProgramHandle program = bgfx::createProgram(vertex_shader_handle, fragment_shader_handle, true);
 
 	// create entities
-	/*
-	const size_t side_length = 20;
-	const size_t depth_length = 20;
+	//*
+	const size_t side_length = 50;
+	const size_t depth_length = 50;
 	const size_t n_testcubes = side_length*depth_length;
 	flecs::entity testcubes[n_testcubes];
 	for (size_t i = 0; i < n_testcubes; i++) {
