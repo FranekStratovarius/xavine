@@ -37,7 +37,7 @@ void xavine::load_cubes(flecs::world* world) {
 
 	for (size_t i = 0; i < side_length; i++) {
 		for (size_t j = 0; j < depth_length; j++) {
-			testcubes[i * depth_length + j].set<xavine::Position>({{(i - side_length / 2.0) * 4, (double)j * 4, 0}});
+			testcubes[i * depth_length + j].set<xavine::Position>({{(i - side_length / 2.0) * 4, (float)j * 4, 0}});
 		}
 	}
 	//*/

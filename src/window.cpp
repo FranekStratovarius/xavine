@@ -1,6 +1,4 @@
 #include <cstdio>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
 #include "window.h"
 
 #include "components/player.h"
