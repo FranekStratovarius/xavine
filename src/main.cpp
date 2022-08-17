@@ -23,7 +23,7 @@ int main(void) {
 	// set settings for flecs world
 	unsigned int max_thread_count = std::thread::hardware_concurrency();
 	ecs_set_threads(world, max_thread_count);
-	printf("threads: %d\n", world.get_threads());
+	//printf("threads: %d\n", world.get_threads());
 
 	// fill game world
 	xavine::add_cube_systems(&world);
