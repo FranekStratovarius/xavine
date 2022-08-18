@@ -1,9 +1,9 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef XAVINE_GRAPHICS_H
+#define XAVINE_GRAPHICS_H
 
 /**
  * function for loading shader depending on detected backend
  */
 bgfx::ShaderHandle loadShader(const char *FILENAME);
 
-#endif // GRAPHICS_H
+#endif // XAVINE_GRAPHICS_H

@@ -1,11 +1,11 @@
 add_rules("mode.debug", "mode.release")
 --add_repositories("xavine-xrepo https://github.com/FranekStratovarius/xmake-repo dev")
-add_repositories("xavine-xrepo testrepo")
+--add_repositories("xavine-xrepo testrepo")
 if is_plat("macosx") then
 	-- use static libs on macosx
-	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.6", {system = false})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", {system = false})
 else
-	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.6", {system = false, configs = {shared = true}})
+	add_requires("bgfx 7816", "flecs v3.0.0", "glfw 3.3.8", {system = false, configs = {shared = true}})
 end
 
 rule("shader") do
@@ -75,20 +75,41 @@ target("xavine") do
 		set_languages("cxx11")
 	end
 
-	set_optimize("fastest")
+	--set_warnings("all")
+	set_warnings("everything")
+
+	if is_mode("debug") then
+		-- add macro: DEBUG
+		add_defines("DEBUG")
+		-- enable debug symbols
+		set_symbols("debug")
+		-- disable optimization
+		set_optimize("none")
+	elseif is_mode("release") then
+		-- mark symbols visibility as hidden
+		set_symbols("hidden")
+		-- strip all symbols
+		set_strip("all")
+		-- enable optimization
+		set_optimize("fastest")
+		-- fomit frame pointer
+		add_cxflags("-fomit-frame-pointer")
+		add_mxflags("-fomit-frame-pointer")
+	end
 
 	add_files("src/**.cpp")
 	add_includedirs("include",{public=true})
 
 	-- set bgfx platform defines
 	if is_plat("linux") then
-		add_syslinks("dl")
+		add_syslinks("dl", "pthread")
 		add_defines("BX_PLATFORM_LINUX")
 	elseif is_plat("windows") then
 		add_defines("BX_PLATFORM_WINDOWS")
 	elseif is_plat("macosx") then
 		add_defines("BX_PLATFORM_OSX")
 	end
+	-- set bgfx to multithreaded
 	add_defines("BGFX_CONFIG_MULTITHREADED=1")
 
 	add_rules("shader")

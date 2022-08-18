@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include <bgfx/bgfx.h>
-#include "graphics.h"
+#include "xavine-graphics.h"
 
 bgfx::ShaderHandle loadShader(const char *FILENAME) {
 	const char* shaderPath = "???";
@@ -30,7 +30,7 @@ bgfx::ShaderHandle loadShader(const char *FILENAME) {
 	strcat (filePath, FILENAME);
 
 	FILE *file = fopen(filePath, "rb");
-	printf("Loading shader: %s\n", filePath);
+	//printf("Loading shader: %s\n", filePath);
 	fseek(file, 0, SEEK_END);
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
