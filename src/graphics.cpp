@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include <bgfx/bgfx.h>
-#include "graphics.h"
+#include "xavine-graphics.h"
 
 bgfx::ShaderHandle loadShader(const char *FILENAME) {
 	const char* shaderPath = "???";

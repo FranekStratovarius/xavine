@@ -1,7 +1,7 @@
 #include <bx/bx.h>
 #include <bx/math.h>
 #include <bgfx/bgfx.h>
-#include "graphics.h"
+#include "xavine-graphics.h"
 
 #include "loader/cube_loader.h"
 #include "components/general.h"

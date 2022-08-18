@@ -1,7 +1,9 @@
 #include <cstdio>
-#include "window.h"
+#include "xavine-window.h"
 
 #include "components/player.h"
+
+xavine::Window xavine::window = xavine::Window();
 
 void glfw_errorCallback(int error, const char* description) {
 	fprintf(stderr, "GLFW error %d: %s\n", error, description);
@@ -92,8 +94,8 @@ xavine::Window::Window() {
 	// Enable stats or debug text.
 	bgfx::setDebug(BGFX_DEBUG_STATS);
 
-	this->input = new struct xavine::Input;
-	glfwSetWindowUserPointer(this->window, this->input);
+	//this->input = new struct xavine::Input;
+	glfwSetWindowUserPointer(this->window, &this->input);
 	glfwSetInputMode(this->window, GLFW_STICKY_KEYS, GLFW_FALSE);
 	glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(this->window, glfw_key_callback);
@@ -116,8 +118,8 @@ bool xavine::Window::should_close() {
 
 void xavine::Window::poll_events() {
 	// reset delta mouse position
-	input->mouse_state.relative.x = 0.0f;
-	input->mouse_state.relative.y = 0.0f;
+	input.mouse_state.relative.x = 0.0f;
+	input.mouse_state.relative.y = 0.0f;
 	// poll input events
 	glfwPollEvents();
 	// Handle window resize.
@@ -169,7 +171,7 @@ void xavine::Window::render_frame(flecs::world* world) {
 }
 
 xavine::Input* xavine::Window::get_input() {
-	return this->input;
+	return &this->input;
 }
 
 int xavine::Window::get_width() {

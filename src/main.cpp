@@ -3,26 +3,22 @@
 #include <thread>
 
 #include "components/general.h"
-#include "components/cubes.h"
 #include "components/player.h"
 #include "systems/cubes.h"
 #include "systems/player.h"
 #include "loader/cube_loader.h"
 
-#include "graphics.h"
-#include "window.h"
+#include "xavine-window.h"
 
 int main(void) {
 	// initialization
-	// create window and renderer
-	xavine::Window window = xavine::Window();
 	// set threading api for flecs
 	stdcpp_set_os_api();
 	// create flecs world
 	flecs::world world;
 	// set settings for flecs world
 	unsigned int max_thread_count = std::thread::hardware_concurrency();
-	ecs_set_threads(world, max_thread_count);
+	//ecs_set_threads(world, max_thread_count);
 	//printf("threads: %d\n", world.get_threads());
 
 	// fill game world
@@ -36,18 +32,18 @@ int main(void) {
 		.set<xavine::Rotation>({});
 
 	// set input singleton
-	world.set<xavine::Input*>(window.get_input());
+	world.set<xavine::Input*>(xavine::window.get_input());
 	
 	// run game loop	
-	while (!window.should_close()) {
+	while (!xavine::window.should_close()) {
 		// get events like input or window resize
-		window.poll_events();
+		xavine::window.poll_events();
 		// make empty drawcall to have more than 0 calls if none other are submitted
-		window.empty_draw_call();
+		xavine::window.empty_draw_call();
 		// run the ecs world
 		world.progress();
 		// render frame
-		window.render_frame(&world);
+		xavine::window.render_frame(&world);
 	}
 
 	return 0;

@@ -1,3 +1,6 @@
+#ifndef XAVINE_WINDOW_H
+#define XAVINE_WINDOW_H
+
 #include <flecs.h>
 #include <flecs_os_api_stdcpp.h>
 
@@ -30,7 +33,6 @@ namespace xavine {
 	class Window {
 		public:
 			Window();
-			Window(char* window_name);
 			~Window();
 			int get_monitor_refresh_rate();
 			bool should_close();
@@ -41,11 +43,14 @@ namespace xavine {
 			int get_width();
 			int get_height();
 		private:
-			char* window_name;
 			GLFWwindow* window;
 			int width, height;
 			bgfx::ViewId kClearView;
-			Input* input;
+			Input input;
 			int refresh_rate;
 	};
+
+	extern Window window;
 }
+
+#endif // XAVINE_WINDOW_H
